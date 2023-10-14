@@ -84,12 +84,29 @@ function Game() {
     setSortAscending(!sortAscending);
   };
 
+  const getLocation = (move) => {
+    if (move === 0) {
+      return ''; // No location for the initial move
+    }
+    const lastMove = history[move - 1].squares;
+    const currentMove = history[move].squares;
+
+    for (let i = 0; i < 9; i++) {
+      if (lastMove[i] !== currentMove[i]) {
+        const row = Math.floor(i / 3) + 1;
+        const col = (i % 3) + 1;
+        return `(${row}, ${col})`;
+      }
+    }
+    return ''; // Default case
+  };
+
   const current = history[stepNumber];
   const { winner, line } = calculateWinner(current.squares);
 
   const moves = history.map((step, move) => {
     const desc = move ? `Go to move #${move}` : 'Go to game start';
-    const location = move ? `(${(move % 3) + 1}, ${Math.floor(move / 3) + 1})` : '';
+    const location = getLocation(move);
     return (
       <li key={move}>
         <button onClick={() => jumpTo(move)} className={move === stepNumber ? 'current-move' : ''}>
